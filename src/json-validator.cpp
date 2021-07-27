@@ -139,6 +139,7 @@ public:
 	{
 	}
 
+	std::regex_constants::syntax_option_type regexType = REGEX_NAMESPACE::regex::ECMAScript;
 	format_checker &format_check() { return format_check_; }
 	content_checker &content_check() { return content_check_; }
 
@@ -761,7 +762,7 @@ public:
 		if (attr != sch.end()) {
 			patternString_ = attr.value();
 			pattern_ = {true, REGEX_NAMESPACE::regex(attr.value().get<std::string>(),
-			                                         REGEX_NAMESPACE::regex::ECMAScript)};
+			                                         root->regexType)};
 			sch.erase(attr);
 		}
 #endif
@@ -1031,7 +1032,7 @@ public:
 			for (auto prop : attr.value().items())
 				patternProperties_.push_back(
 				    std::make_pair(
-				        REGEX_NAMESPACE::regex(prop.key(), REGEX_NAMESPACE::regex::ECMAScript),
+				        REGEX_NAMESPACE::regex(prop.key(), root->regexType),
 				        schema::make(prop.value(), root, {prop.key()}, uris)));
 			sch.erase(attr);
 		}
@@ -1356,6 +1357,11 @@ void json_validator::set_root_schema(const json &schema)
 void json_validator::set_root_schema(json &&schema)
 {
 	root_->set_root_schema(std::move(schema));
+}
+
+void json_validator::set_regex_type(int type)
+{
+	root_->regexType = static_cast<REGEX_NAMESPACE::regex_constants::syntax_option_type>(type);
 }
 
 json json_validator::validate(const json &instance) const

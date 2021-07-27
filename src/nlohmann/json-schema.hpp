@@ -184,6 +184,7 @@ public:
 	// insert and set the root-schema
 	void set_root_schema(const json &);
 	void set_root_schema(json &&);
+	void set_regex_type(int type);
 
 	// validate a json-document based on the root-schema
 	json validate(const json &) const;
